@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
 import requests
 import pprint
 
@@ -131,34 +130,26 @@ class SonarrAPI(object):
         """Searches for new shows on trakt and returns Series object to add"""
         res = self.request_get("{}/series/lookup?term={}".format(self.host_url, 'tvdbId:' + str(tvdbId)))
         s_dict = res.json()[0]
-        #pprint.pprint(s_dict)
-
-        # get all series ids and create new id for new series
-        series = self.get_series()
-        ids = []
-        for show in series:
-            ids.append(show['id'])
-        new_id = max(ids) + 1
 
         # get root folder path
         root = self.get_root_folder()[0]['path']
-        add_json = [{
+        add_json = {
             'title': s_dict['title'],
             'seasons': s_dict['seasons'],
             'path': root + s_dict['title'],
-            'qualityProfileId': 1,         # add customization to quality profile later
+            'qualityProfileId': 4,         # 4 = 1080p, not sure how to determine id from sn.get_quality_profiles())
             'seasonFolder': True,
             'monitored': True,
             'tvdbId': tvdbId,
+            'images': s_dict['images'],
             'titleSlug': s_dict['titleSlug'],
-            'id': new_id,
             "addOptions": {
                           "ignoreEpisodesWithFiles": True,
                           "ignoreEpisodesWithoutFiles": True
                         }
-                    }]
+                    }
 
-        return json.dumps(add_json)
+        return add_json
 
     def add_series(self, tvdvId):
         """Add a new series to your collection"""
