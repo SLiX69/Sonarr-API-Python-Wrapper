@@ -1,7 +1,7 @@
-Sonarr API Python2 Wrapper
+Sonarr API Python Wrapper
 ==========================
 
-Unofficial Python2 Wrapper for the [Sonarr](https://github.com/Sonarr/Sonarr) API
+Unofficial Python Wrapper for the [Sonarr](https://github.com/Sonarr/Sonarr) API
 
 ### Requirements
 - requests
