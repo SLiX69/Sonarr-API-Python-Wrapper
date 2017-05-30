@@ -154,7 +154,6 @@ class SonarrAPI(object):
     def add_series(self, tvdvId):
         """Add a new series to your collection"""
         series_to_add = self.get_series_to_add(tvdbId=tvdvId)
-        # TEST THIS
         res = self.request_post("{}/series".format(self.host_url), data=series_to_add)
         return res.json()
 
