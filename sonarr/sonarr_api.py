@@ -125,7 +125,7 @@ class SonarrAPI(object):
         res = self.request_get("{}/series/{}".format(self.host_url, series_id))
         return res.json()
 
-    def get_series_to_add(self, tvdbId):
+    def get_series_to_add(self, tvdbId, quality_profile):
         """Searches for new shows on trakt and returns Series object to add"""
         res = self.request_get("{}/series/lookup?term={}".format(self.host_url, 'tvdbId:' + str(tvdbId)))
         s_dict = res.json()[0]
@@ -136,7 +136,7 @@ class SonarrAPI(object):
             'title': s_dict['title'],
             'seasons': s_dict['seasons'],
             'path': root + s_dict['title'],
-            'qualityProfileId': 4,         # 4 = 1080p, not sure how to determine id from sn.get_quality_profiles())
+            'qualityProfileId': quality_profile,
             'seasonFolder': True,
             'monitored': True,
             'tvdbId': tvdbId,
@@ -150,9 +150,9 @@ class SonarrAPI(object):
 
         return add_json
 
-    def add_series(self, tvdvId):
+    def add_series(self, tvdvId, quality_profile_id):
         """Add a new series to your collection"""
-        series_to_add = self.get_series_to_add(tvdbId=tvdvId)
+        series_to_add = self.get_series_to_add(tvdbId=tvdvId, quality_profile=quality_profile_id)
         res = self.request_post("{}/series".format(self.host_url), data=series_to_add)
         return res.json()
 
