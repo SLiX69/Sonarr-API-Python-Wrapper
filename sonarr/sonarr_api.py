@@ -125,14 +125,14 @@ class SonarrAPI(object):
         res = self.request_get("{}/series/{}".format(self.host_url, series_id))
         return res.json()
 
-    def get_series_to_add(self, tvdbId, quality_profile):
+    def constuct_series_json(self, tvdbId, quality_profile):
         """Searches for new shows on trakt and returns Series object to add"""
         res = self.request_get("{}/series/lookup?term={}".format(self.host_url, 'tvdbId:' + str(tvdbId)))
         s_dict = res.json()[0]
 
         # get root folder path
         root = self.get_root_folder()[0]['path']
-        add_json = {
+        series_json = {
             'title': s_dict['title'],
             'seasons': s_dict['seasons'],
             'path': root + s_dict['title'],
@@ -147,13 +147,11 @@ class SonarrAPI(object):
                           "ignoreEpisodesWithoutFiles": True
                         }
                     }
+        return series_json
 
-        return add_json
-
-    def add_series(self, tvdvId, quality_profile_id):
+    def add_series(self, series_json):
         """Add a new series to your collection"""
-        series_to_add = self.get_series_to_add(tvdbId=tvdvId, quality_profile=quality_profile_id)
-        res = self.request_post("{}/series".format(self.host_url), data=series_to_add)
+        res = self.request_post("{}/series".format(self.host_url), data=series_json)
         return res.json()
 
     def upd_series(self, data):
