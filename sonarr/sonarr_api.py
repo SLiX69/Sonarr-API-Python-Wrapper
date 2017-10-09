@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import json
 import requests
 
-class SonarrAPI:
-    # Sonarr API
-    host_url = ''
-    api_key = ''
+
+class SonarrAPI(object):
 
     def __init__(self, host_url, api_key):
         """Constructor requires Host-URL and API-KEY"""
@@ -23,6 +20,9 @@ class SonarrAPI:
 
 
     # ENDPOINT COMMAND
+    def command(self):
+        pass
+
 
 
     # ENDPOINT DISKSPACE
@@ -125,10 +125,33 @@ class SonarrAPI:
         res = self.request_get("{}/series/{}".format(self.host_url, series_id))
         return res.json()
 
-    def add_series(self, data):
+    def constuct_series_json(self, tvdbId, quality_profile):
+        """Searches for new shows on trakt and returns Series object to add"""
+        res = self.request_get("{}/series/lookup?term={}".format(self.host_url, 'tvdbId:' + str(tvdbId)))
+        s_dict = res.json()[0]
+
+        # get root folder path
+        root = self.get_root_folder()[0]['path']
+        series_json = {
+            'title': s_dict['title'],
+            'seasons': s_dict['seasons'],
+            'path': root + s_dict['title'],
+            'qualityProfileId': quality_profile,
+            'seasonFolder': True,
+            'monitored': True,
+            'tvdbId': tvdbId,
+            'images': s_dict['images'],
+            'titleSlug': s_dict['titleSlug'],
+            "addOptions": {
+                          "ignoreEpisodesWithFiles": True,
+                          "ignoreEpisodesWithoutFiles": True
+                        }
+                    }
+        return series_json
+
+    def add_series(self, series_json):
         """Add a new series to your collection"""
-        # TEST THIS
-        res = self.request_post("{}/series".format(self.host_url), data)
+        res = self.request_post("{}/series".format(self.host_url), data=series_json)
         return res.json()
 
     def upd_series(self, data):
