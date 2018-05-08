@@ -105,6 +105,22 @@ class SonarrAPI(object):
 
 
     # ENDPOINT RELEASE/PUSH
+    def push_release(self, title, downloadUrl, protocol, publishDate):
+        """Notifies Sonarr of a new release.
+            title: release name
+            downloadUrl: .torrent file URL
+            protocol: usenet / torrent
+            publishDate: ISO8601 date string
+        """
+        res = self.request_post(
+                "{}/release/push".format(self.host_url),
+                {
+                    'title': title,
+                    'downloadUrl': downloadUrl,
+                    'protocol': protocol,
+                    'publishDate': publishDate
+                })
+        return res.json()
 
 
     # ENDPOINT ROOTFOLDER
