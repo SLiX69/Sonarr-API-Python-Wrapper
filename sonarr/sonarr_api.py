@@ -77,6 +77,12 @@ class SonarrAPI(object):
         """Gets history (grabs/failures/completed)"""
         res = self.request_get("{}/history".format(self.host_url))
         return res.json()
+    
+    # ENDPOINT HISTORY SIZE
+    def get_history_size(self, page_size):
+        """Gets history (grabs/failures/completed)"""
+        res = self.request_get("{}/history?pageSize={}".format(self.host_url, page_size))
+        return res.json()
 
 
     # ENDPOINT WANTED MISSING
